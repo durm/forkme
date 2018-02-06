@@ -44,7 +44,10 @@ def fork(num_processes, max_restarts=100, pass_signals=default_signals):
             interrupt = True
 
         for pid in children:
-            os.kill(pid, sig)
+            try:
+                os.kill(pid, sig)
+            except ProcessLookupError:
+                log.warning("Can't send signal %s to child with PID %s. Child doesn't exist.", sig, pid)
 
     def start(number):
         pid = os.fork()
